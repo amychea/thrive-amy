@@ -13,10 +13,19 @@ function readJSONFile(filename) {
 }
 
 // Compare last names for sorting users
-function compareLastName(a, b) {
-  const lastNameA = a.last_name.toLowerCase();
-  const lastNameB = b.last_name.toLowerCase();
+function compareLastName(userA, userB) {
+  const lastNameA = userA.last_name.toLowerCase();
+  const lastNameB = userB.last_name.toLowerCase();
   return lastNameA.localeCompare(lastNameB);
+}
+
+function getUserInfo(user, company) {
+  // Calculate token balance by adding users current token and the company top up value
+  const newTokenBalance = company.top_up + user.tokens;
+  return `
+        ${user.last_name}, ${user.first_name}, ${user.email}        
+          Previous Token Balance: ${user.tokens}
+          New Token Balance: ${newTokenBalance}`;
 }
 
 function processCompanyData(usersData, companiesData) {
@@ -40,12 +49,7 @@ function processCompanyData(usersData, companiesData) {
     let notEmailedUsers = "";
 
     for (const user of usersInCompany) {
-      // Calculate token balance by adding users current token and the company top up value
-      const newTokenBalance = company.top_up + user.tokens;
-      const userInfo = `
-            ${user.last_name}, ${user.first_name}, ${user.email}        
-              Previous Token Balance: ${user.tokens}
-              New Token Balance: ${newTokenBalance}`;
+      const userInfo = getUserInfo(user, company);
       // User email status and company email status is true
       if (user.email_status && company.email_status) {
         // Add userInfo to the emailed users section
@@ -58,12 +62,12 @@ function processCompanyData(usersData, companiesData) {
 
     const totalTopUp = usersInCompany.reduce((sum, user) => sum + (user.tokens - (user.tokens - company.top_up)), 0,);
     const companyInformation = `    
-        Company Id: ${company.id}    
-        Company Name: ${company.name}    
-        Users Emailed: ${emailedUsers}    
-        Users Not Emailed: ${notEmailedUsers}
-      `;
-    return (companyInformation + `      Total amount of top ups for ${company.name}: ${totalTopUp}`);
+    Company Id: ${company.id}    
+    Company Name: ${company.name}    
+    Users Emailed: ${emailedUsers}    
+    Users Not Emailed: ${notEmailedUsers}
+    `;
+    return (companyInformation + `    Total amount of top ups for ${company.name}: ${totalTopUp}`);
   });
 
   return outputData;
