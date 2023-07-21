@@ -8,7 +8,7 @@ This script processes two json files, `users.json` and `companies.json` and crea
 
 ## Installation
 
-1. Clone thie repo: `git clone https://github.com/amychea/thrive-amy`
+1. Clone thie repo: `git clone https://github.com/amychea/thrive-amy.git`
 2. Open the folder
 
 ## Usage
