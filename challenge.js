@@ -8,7 +8,7 @@ function readJSONFile(filename) {
     return JSON.parse(rawData);
   } catch (error) {
     console.error(`Error reading or parsing JSON file "${filename}":`, error.message);
-    throw new Error(error.message);
+    return null;
   }
 }
 
@@ -22,6 +22,9 @@ function compareLastName(a, b) {
 function processCompanyData(usersData, companiesData) {
   // Filter users where active status is true
   const activeUsers = usersData.filter((user) => user.active_status);
+  // Sort by last name
+  activeUsers.sort(compareLastName);
+  
   // Sort company data by id 
   const sortedCompanies = companiesData.sort((a, b) => a.id - b.id);
   const outputData = sortedCompanies.map((company) => {
@@ -39,8 +42,10 @@ function processCompanyData(usersData, companiesData) {
     for (const user of usersInCompany) {
       // Calculate token balance by adding users current token and the company top up value
       const newTokenBalance = company.top_up + user.tokens;
-      const userInfo = `      ${user.last_name}, ${user.first_name}, ${user.email}\n        Previous Token Balance: ${user.tokens}\n        New Token Balance: ${newTokenBalance}\n`;
-      
+      const userInfo = `
+            ${user.last_name}, ${user.first_name}, ${user.email}        
+              Previous Token Balance: ${user.tokens}
+              New Token Balance: ${newTokenBalance}`;
       // User email status and company email status is true
       if (user.email_status && company.email_status) {
         // Add userInfo to the emailed users section
@@ -52,8 +57,13 @@ function processCompanyData(usersData, companiesData) {
     }
 
     const totalTopUp = usersInCompany.reduce((sum, user) => sum + (user.tokens - (user.tokens - company.top_up)), 0,);
-    const companyInformation = `    Company Id: ${company.id}\n    Company Name: ${company.name}\n    Users Emailed: \n${emailedUsers}    Users Not Emailed: \n${notEmailedUsers}`;
-    return (companyInformation + `      Total amount of top ups for ${company.name}: ${totalTopUp}\n`);
+    const companyInformation = `    
+        Company Id: ${company.id}    
+        Company Name: ${company.name}    
+        Users Emailed: ${emailedUsers}    
+        Users Not Emailed: ${notEmailedUsers}
+      `;
+    return (companyInformation + `      Total amount of top ups for ${company.name}: ${totalTopUp}`);
   });
 
   return outputData;
