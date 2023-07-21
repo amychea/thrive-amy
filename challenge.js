@@ -1,7 +1,16 @@
 // Node.js file system module
 const fs = require("fs");
-const usersData = JSON.parse(fs.readFileSync("users.json"));
-const companiesData = JSON.parse(fs.readFileSync("companies.json"));
+
+// Add error handling for JSON
+function readJSONFile(filename) {
+  try {
+    const rawData = fs.readFileSync(filename);
+    return JSON.parse(rawData);
+  } catch (error) {
+    console.error(`Error reading or parsing JSON file "${filename}":`, error.message);
+    throw new Error(error.message);
+  }
+}
 
 // Compare last names for sorting users
 function compareLastName(a, b) {
@@ -51,8 +60,25 @@ function processCompanyData(usersData, companiesData) {
 }
 
 function writeOutputToFile(outputData) {
-  fs.writeFileSync("output.txt", outputData.join("\n"));
+  try {
+    fs.writeFileSync("output.txt", outputData.join("\n"));
+    console.log("Output written to 'output.txt'.");
+  } catch (error) {
+    console.error("Error writing output to 'output.txt':", error.message);
+  }
 }
 
-const outputData = processCompanyData(usersData, companiesData);
-writeOutputToFile(outputData);
+try {
+  const usersData = readJSONFile("users.json");
+  const companiesData = readJSONFile("companies.json");
+
+  // if usersData or companiesData is falsy throw an error
+  if (!usersData || !companiesData) {
+    throw new Error("Failed to read or parse JSON files.");
+  }
+
+  const outputData = processCompanyData(usersData, companiesData);
+  writeOutputToFile(outputData);
+} catch (error) {
+  console.error("An error occurred:", error.message);
+}
