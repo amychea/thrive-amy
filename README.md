@@ -23,6 +23,6 @@ This script processes two json files, `users.json` and `companies.json` and crea
 - Users are sorted alphabetically by last name
 - Companies are sorted by their company IDs
 - If there are no active users in the company, the company will not be shown in the output file
-- The "Total amount of top ups" is the difference between the previous token balance and the new token balance, summed from all the users
+- The "total amount of top ups" is the difference between the previous token balance and the new token balance, summed from all the users in that company
 - If the script encounters any issues while reading or parsing the JSON files, it will log an error message to the console with the specific file and reason for the error. It will continue execution but will return null for the data. 
 - If either JSON files are missing or cannot be parsed correctly, the script will throw an error and terminate the process preventing further data processing
